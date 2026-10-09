@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FeastFlow - Multi-Role Food Delivery & Gourmet Commerce</title>
+  <meta name="description" content="FeastFlow is a modern, responsive food delivery platform featuring live tracking, role-based workflows for Customers, Restaurants, Riders, and Admins.">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- App Wrapper (Supports standard responsive & simulated mobile preview mode) -->
+  <div id="app-viewport-wrapper">
+    
+    <!-- Top Sticky Header -->
+    <header class="top-navbar" id="main-header">
+      <div class="nav-container">
+        
+        <!-- Brand Logo -->
+        <div class="brand-group" onclick="App.switchRoleView('customer')">
+          <div class="brand-logo-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+            </svg>
+          </div>
+          <div class="brand-title-wrap">
+            <span class="brand-title">Feast<span class="brand-highlight">Flow</span></span>
+            <span class="brand-subtitle">Gourmet Delivery</span>
+          </div>
+        </div>
+
+        <!-- Location Dropdown Selector -->
+        <div class="header-location-pill" title="Click to view/change delivery location" onclick="App.openProfileModal()">
+          <span class="loc-icon">📍</span>
+          <div class="loc-details">
+            <span class="loc-label">Delivering To</span>
+            <span class="loc-address">742 Evergreen Terr, Springfield ▾</span>
+          </div>
+        </div>
+
+        <!-- Center Global Search Input -->
+        <div class="header-search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-food-input" class="header-search-input" placeholder="Search pizza, juicy burgers, sushi, pasta..." />
+        </div>
+
+        <!-- Right Header Actions -->
+        <div class="header-actions">
+          
+          <!-- Mobile View Toggle Simulator for desktop preview -->
+          <button id="toggle-mobile-mode-btn" class="header-btn btn-ghost" title="Toggle Mobile Phone Mode Simulator">
+            <span>📱 Simulator</span>
+          </button>
+
+          <!-- Role Quick Switcher Selector -->
+          <div class="header-role-switcher" title="Instantly switch your portal role">
+            <span class="role-switch-label">Role:</span>
+            <select id="header-role-select" class="role-select-box">
+              <option value="customer">👤 Customer (Ayaz)</option>
+              <option value="restaurant">🍳 Restaurant (Chef Marco)</option>
+              <option value="rider">🛵 Rider (Alex Swift)</option>
+              <option value="admin">👑 Super Admin (Vance)</option>
+            </select>
+          </div>
+
+          <!-- Shopping Cart Button (Customer role) -->
+          <button class="header-cart-btn open-cart-btn" id="header-cart-trigger" aria-label="Open Shopping Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span class="cart-badge cart-count-badge">0</span>
+          </button>
+
+          <!-- User Profile & Login Info Chip -->
+          <div class="header-user-profile" id="header-user-badge" onclick="App.openProfileModal()">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="User Avatar" id="header-user-avatar" class="user-avatar-tiny" />
+            <div class="user-info-text">
+              <span class="user-greeting-name" id="header-user-name">Ayaz Khan</span>
+              <span class="role-badge badge-customer" id="header-role-pill">Foodie (Customer)</span>
+            </div>
+          </div>
+
+          <!-- Login / Auth Trigger Button -->
+          <button class="btn btn-outline btn-sm auth-open-btn" onclick="Auth.openAuthModal('login')">
+            <span>Auth</span>
+          </button>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-body" id="main-content-area">
+
+      <!-- ============================================== -->
+      <!-- 1. STARTING GREETING & HERO SECTION           -->
+      <!-- ============================================== -->
+      <section class="greeting-hero" id="greeting-hero-section">
+        <div class="hero-container">
+          <div class="hero-content">
+            <div class="hero-badge">
+              <span class="pulse-dot"></span>
+              <span>⚡ Ultra-Fast 25 Min Gourmet Delivery</span>
+            </div>
+            <h1 class="greeting-title" id="greeting-title">
+              Good Afternoon, <span class="text-gradient">Ayaz</span>! 🍕
+            </h1>
+            <p class="greeting-subtitle" id="greeting-subtitle">
+              Savor chef-curated dishes, hot artisan pizzas, and refreshing cold brews delivered directly to your door.
+            </p>
+
+            <!-- Quick Action Tags -->
+            <div class="hero-tags-row">
+              <button class="hero-tag-pill" onclick="CustomerView.setCategory('Burgers')">🍔 Smashed Burgers</button>
+              <button class="hero-tag-pill" onclick="CustomerView.setCategory('Pizza')">🍕 Wood-Fired Pizza</button>
+              <button class="hero-tag-pill" onclick="CustomerView.setCategory('Asian')">🍱 Fresh Sushi</button>
+              <button class="hero-tag-pill" onclick="CustomerView.setCategory('Biryani')">🍛 Awadhi Biryani</button>
+              <button class="hero-tag-pill" onclick="CustomerView.setCategory('Desserts')">🍰 Belgian Waffles</button>
+            </div>
+          </div>
+
+          <!-- Promo Voucher Card -->
+          <div class="hero-promo-card">
+            <div class="promo-card-content">
+              <span class="promo-tag">LIMITED SPECIAL</span>
+              <h3>Get 30% Off Feast</h3>
+              <p>Apply code at checkout on all orders above $15</p>
+              <div class="promo-code-box" onclick="Cart.applyPromo('FEAST30')">
+                <span class="code-text">FEAST30</span>
+                <span class="copy-tag">Apply Code ✨</span>
+              </div>
+            </div>
+            <div class="promo-decoration">🍕</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- 2. CUSTOMER VIEW                              -->
+      <!-- ============================================== -->
+      <section id="view-customer" class="role-view-section">
+        
+        <!-- Category Filter Carousel -->
+        <div class="categories-bar-wrapper">
+          <div class="categories-scroll" id="categories-container">
+            <!-- Dynamically populated categories -->
+          </div>
+        </div>
+
+        <!-- Filter & Dietary Options Bar -->
+        <div class="filter-controls-bar">
+          <div class="filter-left">
+            <label class="toggle-switch-label">
+              <input type="checkbox" id="toggle-veg-only">
+              <span class="toggle-slider"></span>
+              <span class="toggle-text">🥬 Pure Veg Only</span>
+            </label>
+          </div>
+          <div class="filter-right">
+            <span class="results-hint">Showing freshly prepared delicacies</span>
+          </div>
+        </div>
+
+        <!-- Featured Restaurants Showcase -->
+        <div class="restaurants-section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Top Rated Kitchens Nearby</h2>
+              <p class="section-subtitle">Hand-picked by food connoisseurs</p>
+            </div>
+          </div>
+          <div class="restaurants-grid" id="restaurants-grid">
+            <!-- Dynamically populated restaurants -->
+          </div>
+        </div>
+
+        <!-- Popular Dishes Food Catalog -->
+        <div class="dishes-section" id="dishes-section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Explore Gourmet Menu</h2>
+              <p class="section-subtitle">Click any dish to customize & add to your feast</p>
+            </div>
+          </div>
+          <div class="dishes-grid" id="dishes-grid">
+            <!-- Dynamically populated dishes -->
+          </div>
+        </div>
+
+        <!-- Customer Recent Orders & Tracking Section -->
+        <div class="customer-orders-section" id="customer-orders-section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">My Orders & Live Status</h2>
+              <p class="section-subtitle">Track your delivery rider in real time</p>
+            </div>
+          </div>
+          <div class="orders-list-grid" id="customer-orders-list">
+            <!-- Dynamically populated customer orders -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============================================== -->
+      <!-- 3. RESTAURANT MANAGER VIEW                    -->
+      <!-- ============================================== -->
+      <section id="view-restaurant" class="role-view-section hidden">
+        
+        <!-- Kitchen Header & Metrics -->
+        <div class="role-dashboard-header">
+          <div class="role-badge-row">
+            <span class="role-badge badge-restaurant">👨‍🍳 Kitchen Partner Portal</span>
+            <span class="portal-rest-name" id="kitchen-rest-title">Bella Italia Bistro</span>
+          </div>
+          <h2>Live Kitchen Display System (KDS)</h2>
+          <p class="text-muted">Manage incoming tickets, mark food ready, and control live menu pricing & availability.</p>
+        </div>
+
+        <!-- Kitchen Stats Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-icon">💰</span>
+            <div class="kpi-meta">
+              <span class="kpi-label">Today's Sales</span>
+              <h3 class="kpi-value text-success" id="rest-stat-revenue">$0.00</h3>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-icon">🍳</span>
+            <div class="kpi-meta">
+              <span class="kpi-label">Cooking in Kitchen</span>
+              <h3 class="kpi-value text-warning" id="rest-stat-active">0</h3>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-icon">✅</span>
+            <div class="kpi-meta">
+              <span class="kpi-label">Orders Completed</span>
+              <h3 class="kpi-value" id="rest-stat-completed">0</h3>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-icon">⏱️</span>
+            <div class="kpi-meta">
+              <span class="kpi-label">Avg Cook Speed</span>
+              <h3 class="kpi-value" id="rest-stat-avgtime">16 min</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kitchen Orders Filter Tabs -->
+        <div class="kot-filter-bar">
+          <button class="kot-filter-btn active" data-filter="all" onclick="RestaurantView.setOrderFilter('all')">All Tickets</button>
+          <button class="kot-filter-btn" data-filter="pending" onclick="RestaurantView.setOrderFilter('pending')">⚡ New Incoming</button>
+          <button class="kot-filter-btn" data-filter="preparing" onclick="RestaurantView.setOrderFilter('preparing')">🔥 Preparing</button>
+          <button class="kot-filter-btn" data-filter="ready" onclick="RestaurantView.setOrderFilter('ready')">🔔 Ready for Courier</button>
+          <button class="kot-filter-btn" data-filter="delivered" onclick="RestaurantView.setOrderFilter('delivered')">Completed</button>
+        </div>
+
+        <!-- Live Kitchen Order Tickets Grid -->
+        <div class="kot-grid" id="kot-orders-grid">
+          <!-- Dynamically populated KOT cards -->
+        </div>
+
+        <!-- Restaurant Menu Management -->
+        <div class="menu-management-card" id="rest-menu-section">
+          <div class="card-header-flex">
+            <div>
+              <h3>Menu Catalog & Stock Control</h3>
+              <p class="text-muted">Turn items off if ingredients run out or update prices</p>
+            </div>
+            <button class="btn btn-primary" onclick="RestaurantView.openAddDishModal()">
+              ➕ Add New Dish
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Dish Item</th>
+                  <th>Price ($)</th>
+                  <th>Customer Rating</th>
+                  <th>Inventory Status</th>
+                </tr>
+              </thead>
+              <tbody id="restaurant-menu-table-body">
+                <!-- Dynamically populated menu rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============================================== -->
+      <!-- 4. DELIVERY PARTNER / RIDER VIEW               -->
+      <!-- ============================================== -->
+      <section id="view-rider" class="role-view-section hidden">
+        
+        <div class="role-dashboard-header">
+          <div class="role-badge-row">
+            <span class="role-badge badge-rider">🛵 Delivery Courier Portal</span>
+            <span class="status-pill status-online" id="rider-online-status-badge">ONLINE • Ready for Orders</span>
+          </div>
+          <h2>Courier Operations & Navigation HUD</h2>
+          <p class="text-muted">Accept delivery requests, navigate to customers, and track your daily tips & earnings.</p>
+        </div>
+
+        <!-- Rider Shift Stats & Online Toggle -->
+        <div class="rider-stats-bar">
+          <div class="rider-toggle-wrap">
+            <label class="switch">
+              <input type="checkbox" id="rider-online-toggle" checked>
+              <span class="slider round"></span>
+            </label>
+            <span class="rider-toggle-label">Accept Delivery Offers</span>
+          </div>
+          <div class="rider-quick-stats">
+            <div class="stat-bubble">
+              <span class="bubble-label">Today's Earnings</span>
+              <strong class="bubble-val text-success" id="rider-stat-earnings">$86.50</strong>
+            </div>
+            <div class="stat-bubble">
+              <span class="bubble-label">Trips Completed</span>
+              <strong class="bubble-val" id="rider-stat-trips">12</strong>
+            </div>
+            <div class="stat-bubble">
+              <span class="bubble-label">Rider Rating</span>
+              <strong class="bubble-val text-warning" id="rider-stat-rating">4.95 ⭐</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Delivery Navigation Screen (when order accepted) -->
+        <div id="rider-active-trip-view" class="active-trip-container">
+          <!-- Dynamically populated active trip HUD -->
+        </div>
+
+        <!-- Available Delivery Orders Pool -->
+        <div class="available-orders-section">
+          <div class="section-header">
+            <div>
+              <h3 class="section-title">Available Delivery Requests Nearby</h3>
+              <p class="section-subtitle">Pick up from restaurants ready for dispatch</p>
+            </div>
+          </div>
+          <div class="rider-orders-list" id="rider-available-orders-list">
+            <!-- Dynamically populated available jobs -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============================================== -->
+      <!-- 5. ADMIN PANEL VIEW                           -->
+      <!-- ============================================== -->
+      <section id="view-admin" class="role-view-section hidden">
+        
+        <div class="role-dashboard-header">
+          <div class="role-badge-row">
+            <span class="role-badge badge-admin">👑 Super Administrator Control Center</span>
+            <span class="badge-pill">Platform Version 2.4</span>
+          </div>
+          <h2>Platform Executive Analytics & Control Desk</h2>
+          <p class="text-muted">Monitor platform-wide GMV, live orders dispatch, manage user permissions and restaurant partners.</p>
+        </div>
+
+        <!-- Admin KPI Metrics -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-icon">📈</span>
+            <div class="kpi-meta">
+              <span class="kpi-label">Total Platform GMV</span>
+              <h3 class="kpi-value text-success" id="admin-kpi-gmv">$34,890.00</h3>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-icon">📦</span>
+            <div class="kpi-meta">
+              <span class="kpi-label">Orders Completed</span>
+              <h3 class="kpi-value" id="admin-kpi-orders">1,420</h3>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-icon">🛵</span>
+            <div class="kpi-meta">
+              <span class="kpi-label">Active Couriers</span>
+              <h3 class="kpi-value text-primary" id="admin-kpi-riders">18</h3>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-icon">🏪</span>
+            <div class="kpi-meta">
+              <span class="kpi-label">Partner Restaurants</span>
+              <h3 class="kpi-value" id="admin-kpi-restaurants">38</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Platform Analytics Visual Bars -->
+        <div class="admin-charts-grid">
+          <div class="admin-chart-card">
+            <h4>Weekly Sales Volume</h4>
+            <div class="bar-chart-visual">
+              <div class="bar-col"><div class="bar-fill" style="height: 60%"></div><span>Mon</span></div>
+              <div class="bar-col"><div class="bar-fill" style="height: 75%"></div><span>Tue</span></div>
+              <div class="bar-col"><div class="bar-fill" style="height: 50%"></div><span>Wed</span></div>
+              <div class="bar-col"><div class="bar-fill" style="height: 85%"></div><span>Thu</span></div>
+              <div class="bar-col"><div class="bar-fill" style="height: 95%"></div><span>Fri</span></div>
+              <div class="bar-col"><div class="bar-fill" style="height: 100%"></div><span>Sat</span></div>
+              <div class="bar-col"><div class="bar-fill" style="height: 90%"></div><span>Sun</span></div>
+            </div>
+          </div>
+          <div class="admin-chart-card">
+            <h4>Top Food Categories</h4>
+            <div class="category-breakdown-list">
+              <div class="breakdown-item">
+                <span>🍔 Gourmet Burgers</span>
+                <span class="breakdown-bar-val">38%</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="prog-fill" style="width: 38%"></div></div>
+
+              <div class="breakdown-item mt-2">
+                <span>🍕 Artisan Pizzas</span>
+                <span class="breakdown-bar-val">28%</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="prog-fill bg-warning" style="width: 28%"></div></div>
+
+              <div class="breakdown-item mt-2">
+                <span>🍱 Asian Rolls & Bowls</span>
+                <span class="breakdown-bar-val">19%</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="prog-fill bg-info" style="width: 19%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Orders Control Table -->
+        <div class="admin-table-card mt-4">
+          <div class="card-header-flex">
+            <div>
+              <h3>All Platform Orders</h3>
+              <p class="text-muted">Real-time status tracking and emergency overrides</p>
+            </div>
+            <div class="table-actions">
+              <select id="admin-order-filter" class="form-select-sm">
+                <option value="all">Filter: All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="preparing">Preparing</option>
+                <option value="ready">Ready</option>
+                <option value="out_for_delivery">In Transit</option>
+                <option value="delivered">Delivered</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Restaurant</th>
+                  <th>Bill Total</th>
+                  <th>Current Status</th>
+                  <th>Assigned Rider</th>
+                  <th>Override Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-orders-table-body">
+                <!-- Dynamically populated admin orders -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- User & Role Management Table -->
+        <div class="admin-table-card mt-4" id="admin-users-table">
+          <div class="card-header-flex">
+            <div>
+              <h3>User & Role Access Management</h3>
+              <p class="text-muted">Promote or assign permissions across Customer, Restaurant, Rider, and Admin roles</p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>User Profile</th>
+                  <th>Assigned Role</th>
+                  <th>Account Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-table-body">
+                <!-- Dynamically populated users -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ============================================== -->
+    <!-- 6. RESPONSIVE BOTTOM NAVIGATION BAR           -->
+    <!-- (Adaptive tabs based on active role)           -->
+    <!-- ============================================== -->
+    <nav class="bottom-navigation-bar" id="bottom-nav-bar" aria-label="Bottom Navigation">
+      <!-- Dynamically rendered by Navigation.renderBottomNav(role) -->
+    </nav>
+
+  </div> <!-- End App Wrapper -->
+
+  <!-- ============================================== -->
+  <!-- 7. SLIDE-OVER SHOPPING CART DRAWER            -->
+  <!-- ============================================== -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Shopping Cart">
+    <div class="cart-drawer-header">
+      <div class="cart-title-row">
+        <h3>Your Food Cart</h3>
+        <span class="cart-count-badge">0</span>
+      </div>
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Close Cart">✕</button>
+    </div>
+
+    <!-- Empty state -->
+    <div class="cart-empty-state hidden" id="cart-empty-state">
+      <div class="empty-cart-icon">🛒</div>
+      <h4>Your basket is hungry</h4>
+      <p>Discover tantalizing dishes from gourmet restaurants and add them here!</p>
+      <button class="btn btn-primary mt-3" onclick="Cart.closeCart(); CustomerView.setCategory('All')">Browse Menu</button>
+    </div>
+
+    <!-- Cart Item List -->
+    <div class="cart-items-scroll" id="cart-items-list">
+      <!-- Dynamically populated cart items -->
+    </div>
+
+    <!-- Checkout Footer & Billing Breakdown -->
+    <div class="cart-checkout-footer" id="cart-checkout-footer">
+      
+      <!-- Promo code coupon -->
+      <div class="promo-input-row">
+        <input type="text" id="cart-promo-input" class="promo-input" placeholder="Coupon Code (e.g. FEAST30)" />
+        <button id="btn-apply-promo" class="btn btn-outline btn-sm">Apply</button>
+      </div>
+      <div id="applied-promo-badge"></div>
+
+      <!-- Bill breakdown -->
+      <div class="bill-summary-table">
+        <div class="bill-row">
+          <span>Subtotal</span>
+          <span id="cart-summary-subtotal">$0.00</span>
+        </div>
+        <div class="bill-row discount-row hidden" id="cart-summary-discount-row">
+          <span>Discount</span>
+          <span id="cart-summary-discount" class="text-success">-$0.00</span>
+        </div>
+        <div class="bill-row">
+          <span>Delivery Fee</span>
+          <span id="cart-summary-delivery">$2.99</span>
+        </div>
+        <div class="bill-row">
+          <span>Taxes & Service</span>
+          <span id="cart-summary-taxes">$0.00</span>
+        </div>
+        <div class="bill-row bill-total-row">
+          <span>Total To Pay</span>
+          <span id="cart-summary-total">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Delivery Address Preview -->
+      <div class="checkout-delivery-preview">
+        <div class="addr-row">
+          <span>📍 <strong>Deliver to:</strong> 742 Evergreen Terrace, Springfield</span>
+          <button class="btn-text" onclick="App.openProfileModal()">Change</button>
+        </div>
+      </div>
+
+      <!-- Checkout Button -->
+      <button class="btn btn-primary btn-block checkout-action-btn" id="btn-checkout-now">
+        <span>Proceed to Checkout</span>
+        <span class="checkout-arrow">→</span>
+      </button>
+
+    </div>
+  </aside>
+
+  <!-- ============================================== -->
+  <!-- 8. AUTHENTICATION & LOGIN MODAL                -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="auth-modal">
+    <div class="modal-box auth-modal-box">
+      <button class="modal-close-btn" onclick="Auth.closeAuthModal()">✕</button>
+
+      <div class="auth-header">
+        <div class="auth-logo-badge">🔥</div>
+        <h2>Welcome to FeastFlow</h2>
+        <p class="text-muted">Log in to track orders, manage menus, or deliver feasts</p>
+      </div>
+
+      <!-- Quick 1-Click Demo Login Panel -->
+      <div class="demo-login-section">
+        <span class="demo-badge-label">⚡ 1-Click Instant Demo Login:</span>
+        <div class="demo-buttons-grid">
+          <button class="demo-role-btn btn-customer" onclick="Auth.loginDemo('customer')">
+            <span class="demo-emoji">👤</span>
+            <div><strong>Customer</strong><small class="block">Ayaz Khan</small></div>
+          </button>
+          <button class="demo-role-btn btn-restaurant" onclick="Auth.loginDemo('restaurant')">
+            <span class="demo-emoji">👨‍🍳</span>
+            <div><strong>Restaurant</strong><small class="block">Chef Marco</small></div>
+          </button>
+          <button class="demo-role-btn btn-rider" onclick="Auth.loginDemo('rider')">
+            <span class="demo-emoji">🛵</span>
+            <div><strong>Rider Partner</strong><small class="block">Alex Swift</small></div>
+          </button>
+          <button class="demo-role-btn btn-admin" onclick="Auth.loginDemo('admin')">
+            <span class="demo-emoji">👑</span>
+            <div><strong>Super Admin</strong><small class="block">Sarah Vance</small></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Auth Tabs: Login vs Register -->
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" data-tab="login" onclick="Auth.switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab-btn" data-tab="signup" onclick="Auth.switchAuthTab('signup')">Create Account</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="auth-form-login" onsubmit="event.preventDefault(); Auth.login(this.email.value, this.password.value)">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" class="form-input" placeholder="ayaz@feastflow.com" required value="ayaz@feastflow.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" class="form-input" placeholder="••••••••" required value="password123">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-3">Sign In to FeastFlow</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="auth-form-signup" class="hidden" onsubmit="event.preventDefault(); Auth.signup(this.name.value, this.email.value, this.role.value, this.phone.value)">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="name" class="form-input" placeholder="e.g. John Doe" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" class="form-input" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" class="form-input" placeholder="+1 (555) 234-5678">
+        </div>
+        <div class="form-group">
+          <label>Select Your Platform Role</label>
+          <select name="role" class="form-input">
+            <option value="customer">👤 Customer (Order Food)</option>
+            <option value="restaurant">👨‍🍳 Restaurant Partner (Manage Kitchen)</option>
+            <option value="rider">🛵 Delivery Rider (Deliver Orders)</option>
+            <option value="admin">👑 Administrator</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Create Password</label>
+          <input type="password" name="password" class="form-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-3">Create Free Account</button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 9. DISH DETAIL & CUSTOMIZE MODAL               -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="dish-detail-modal">
+    <div class="modal-box dish-modal-container">
+      <button class="modal-close-btn" onclick="CustomerView.closeDishModal()">✕</button>
+      <div id="dish-modal-body">
+        <!-- Dynamically rendered by CustomerView.openDishModal() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 10. LIVE ORDER TRACKING MODAL & TELEMETRY      -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="order-tracking-modal">
+    <div class="modal-box tracking-modal-container">
+      <button class="modal-close-btn" onclick="CustomerView.closeOrderTracker()">✕</button>
+      <div id="order-tracking-body">
+        <!-- Dynamically rendered by CustomerView.openOrderTracker() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 11. RESTAURANT ADD DISH MODAL                  -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="add-dish-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="RestaurantView.closeAddDishModal()">✕</button>
+      <h3>Add New Item to Kitchen Menu</h3>
+      <p class="text-muted mb-3">Introduce a new culinary creation to your online patrons</p>
+      
+      <form id="form-add-dish">
+        <div class="form-group">
+          <label>Dish Name</label>
+          <input type="text" name="dishName" class="form-input" placeholder="e.g. Signature Truffle Risotto" required>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Category</label>
+            <select name="dishCategory" class="form-input">
+              <option value="Burgers">Burgers</option>
+              <option value="Pizza">Pizza</option>
+              <option value="Pasta">Pasta</option>
+              <option value="Asian">Asian</option>
+              <option value="Biryani">Biryani</option>
+              <option value="Healthy">Healthy</option>
+              <option value="Desserts">Desserts</option>
+              <option value="Beverages">Beverages</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price ($ USD)</label>
+            <input type="number" step="0.01" name="dishPrice" class="form-input" placeholder="15.99" required>
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Preparation Time</label>
+            <input type="text" name="dishPrepTime" class="form-input" placeholder="18 min">
+          </div>
+          <div class="form-group flex-center pt-4">
+            <label class="toggle-switch-label">
+              <input type="checkbox" name="dishIsVeg">
+              <span class="toggle-slider"></span>
+              <span class="toggle-text">🥬 Pure Veg</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Dish Photo URL (Unsplash or direct image)</label>
+          <input type="url" name="dishImage" class="form-input" placeholder="https://images.unsplash.com/..." value="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80">
+        </div>
+        <div class="form-group">
+          <label>Description & Ingredients</label>
+          <textarea name="dishDesc" class="form-input" rows="3" placeholder="Crisp description of flavors and ingredients..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Publish to Menu</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 12. USER PROFILE & SWITCH ACCOUNT MODAL       -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="profile-modal">
+    <div class="modal-box profile-modal-container">
+      <button class="modal-close-btn" onclick="App.closeProfileModal()">✕</button>
+      <div id="profile-modal-body">
+        <!-- Dynamically rendered by App.openProfileModal() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Toast Notifications Container -->
+  <div id="toast-container" class="toast-tray" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/views/customer.js"></script>
+  <script src="js/views/restaurant.js"></script>
+  <script src="js/views/rider.js"></script>
+  <script src="js/views/admin.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

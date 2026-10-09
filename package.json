@@ -1,0 +1,19 @@
+{
+  "name": "feastflow-food-delivery",
+  "version": "1.0.0",
+  "description": "FeastFlow - Multi-Role Responsive Food Delivery E-Commerce Web Application",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 3000",
+    "serve": "npx -y serve . -p 3000"
+  },
+  "keywords": [
+    "food-delivery",
+    "e-commerce",
+    "multi-role",
+    "responsive",
+    "bottom-nav"
+  ],
+  "author": "FeastFlow Team",
+  "license": "MIT"
+}

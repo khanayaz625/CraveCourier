@@ -1,0 +1,366 @@
+/* ==========================================================================
+   FeastFlow - Responsive Breakpoints & Mobile Bottom Navigation System
+   Includes Mobile Phone Simulator, Docked Glassmorphic Bottom Bar,
+   and Adaptive Grid layouts for all viewports.
+   ========================================================================== */
+
+/* ==========================================================================
+   Responsive Bottom Navigation Bar (Always styled & optimized)
+   ========================================================================== */
+
+.bottom-navigation-bar {
+  display: none; /* activated on mobile or in mobile-simulator mode */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 68px;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.4);
+  z-index: 150;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 0.5rem;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px 4px;
+  position: relative;
+  transition: all var(--transition-fast);
+  border-radius: var(--radius-sm);
+  user-select: none;
+}
+
+.bottom-nav-item:active {
+  transform: scale(0.92);
+}
+
+.nav-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon {
+  font-size: 1.35rem;
+  transition: transform var(--transition-spring);
+}
+
+.nav-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  background: var(--accent-gradient);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 3px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(255, 87, 34, 0.5);
+}
+
+.nav-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: color var(--transition-fast);
+}
+
+.active-indicator {
+  position: absolute;
+  top: 4px;
+  width: 20px;
+  height: 3px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+  opacity: 0;
+  transform: scaleX(0);
+  transition: all var(--transition-spring);
+}
+
+.bottom-nav-item.active {
+  color: #fff;
+}
+
+.bottom-nav-item.active .nav-icon {
+  transform: translateY(-2px);
+}
+
+.bottom-nav-item.active .nav-label {
+  color: var(--accent-primary-hover);
+  font-weight: 700;
+}
+
+.bottom-nav-item.active .active-indicator {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* ==========================================================================
+   Desktop Mobile Simulator Mode
+   (Allows viewing mobile view with bottom navigation directly on desktop)
+   ========================================================================== */
+
+body.mobile-simulator-active {
+  background-color: #030712;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 0;
+}
+
+body.mobile-simulator-active #app-viewport-wrapper {
+  width: 420px;
+  max-width: 100%;
+  min-height: 860px;
+  background-color: var(--bg-primary);
+  border: 10px solid #1e293b;
+  border-radius: 44px;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow-x: hidden;
+  margin: 0 auto;
+}
+
+body.mobile-simulator-active .bottom-navigation-bar {
+  display: flex;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+}
+
+body.mobile-simulator-active .header-search-wrap,
+body.mobile-simulator-active .header-location-pill,
+body.mobile-simulator-active .header-role-switcher {
+  display: none;
+}
+
+body.mobile-simulator-active .hero-container {
+  grid-template-columns: 1fr;
+  padding: 1.5rem;
+}
+
+body.mobile-simulator-active .hero-promo-card {
+  display: none;
+}
+
+body.mobile-simulator-active .greeting-title {
+  font-size: 1.7rem;
+}
+
+body.mobile-simulator-active .dish-modal-grid {
+  grid-template-columns: 1fr;
+}
+
+body.mobile-simulator-active .dish-modal-media {
+  min-height: 200px;
+}
+
+body.mobile-simulator-active .admin-charts-grid {
+  grid-template-columns: 1fr;
+}
+
+/* ==========================================================================
+   Breakpoints: Tablets & Desktops (max-width: 1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .admin-charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-search-wrap {
+    max-width: 260px;
+  }
+}
+
+/* ==========================================================================
+   Breakpoints: Mobile & Smaller Tablets (max-width: 768px)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Show Bottom Navigation */
+  .bottom-navigation-bar {
+    display: flex;
+  }
+
+  /* Padding offset so content doesn't hide behind bottom bar */
+  .role-view-section {
+    padding-bottom: 90px;
+  }
+
+  .toast-tray {
+    bottom: 80px;
+    right: 12px;
+    left: 12px;
+  }
+
+  /* Top Navbar Simplification */
+  .top-navbar {
+    padding: 0.65rem 1rem;
+  }
+
+  .header-location-pill,
+  .header-search-wrap,
+  .header-role-switcher {
+    display: none;
+  }
+
+  .header-user-profile {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .user-info-text {
+    display: none;
+  }
+
+  /* Hero Section */
+  .greeting-hero {
+    padding: 1.25rem 1rem 0.5rem;
+  }
+
+  .hero-container {
+    padding: 1.5rem 1.25rem;
+    border-radius: var(--radius-md);
+  }
+
+  .greeting-title {
+    font-size: 1.65rem;
+  }
+
+  .greeting-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-promo-card {
+    display: none; /* Kept concise for mobile */
+  }
+
+  /* Grid Reductions */
+  .restaurants-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .dishes-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .orders-list-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .kpi-card {
+    padding: 1rem;
+  }
+
+  .kpi-value {
+    font-size: 1.3rem;
+  }
+
+  .kpi-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.5rem;
+  }
+
+  /* Dish Modal */
+  .dish-modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dish-modal-media {
+    min-height: 200px;
+  }
+
+  .dish-modal-info {
+    padding: 1.25rem;
+  }
+
+  /* Cart Drawer */
+  .cart-drawer {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .stepper-horizontal {
+    margin-bottom: 1.25rem;
+  }
+
+  .stepper-horizontal::before {
+    top: 14px;
+  }
+
+  .step-circle {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+
+  .step-label {
+    font-size: 0.6rem;
+  }
+}
+
+/* ==========================================================================
+   Breakpoints: Small Mobile Phones (max-width: 480px)
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .brand-title {
+    font-size: 1.2rem;
+  }
+
+  .brand-logo-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-buttons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .role-switch-grid {
+    grid-template-columns: 1fr;
+  }
+}
