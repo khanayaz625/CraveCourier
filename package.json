@@ -1,19 +1,13 @@
 {
-  "name": "feastflow-food-delivery",
+  "name": "cravecourier-mern-food-delivery",
   "version": "1.0.0",
-  "description": "FeastFlow - Multi-Role Responsive Food Delivery E-Commerce Web Application",
-  "main": "index.html",
+  "description": "Full-Stack MERN E-Commerce Food Delivery Application",
   "scripts": {
-    "start": "python -m http.server 3000",
-    "serve": "npx -y serve . -p 3000"
+    "dev:backend": "node --watch backend/server.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install"
   },
-  "keywords": [
-    "food-delivery",
-    "e-commerce",
-    "multi-role",
-    "responsive",
-    "bottom-nav"
-  ],
-  "author": "FeastFlow Team",
+  "keywords": ["mern", "food-delivery", "ecommerce", "react", "express", "mongodb", "node"],
+  "author": "CraveCourier Team",
   "license": "MIT"
 }

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>CraveCourier | Gourmet Food Delivery Web App</title>
+    
+    <!-- Primary Meta Tags & SEO -->
+    <meta name="description" content="Order artisanal wood-fired pizzas, gourmet smash burgers, authentic dum biryanis, and decadent desserts with lightning-fast delivery and real-time live GPS order tracking." />
+    <meta name="keywords" content="food delivery, gourmet food, pizza, burger, biryani, fast delivery, online food order, restaurant delivery, Bengaluru" />
+    <meta name="theme-color" content="#FF5E1E" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CraveCourier" />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CraveCourier | Gourmet Food Delivery" />
+    <meta property="og:description" content="Savor the finest culinary creations delivered hot and fresh in under 25 minutes." />
+    <meta property="og:image" content="/logo.png" />
+
+    <!-- Brand Icons & PWA Manifest -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Identity Services (Official GIS SDK) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Register PWA Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((reg) => console.log('🚀 CraveCourier PWA Service Worker active:', reg.scope))
+            .catch((err) => console.log('Service Worker registration skipped:', err));
+        });
+      }
+    </script>
+  </body>
+</html>

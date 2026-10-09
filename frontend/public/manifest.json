@@ -1,0 +1,24 @@
+{
+  "name": "CraveCourier - Gourmet Food Delivery",
+  "short_name": "CraveCourier",
+  "description": "Order artisanal pizzas, gourmet smash burgers, authentic dum biryanis, and decadent desserts with lightning-fast delivery and real-time live order tracking.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0F17",
+  "theme_color": "#FF5E1E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["food", "lifestyle", "shopping"]
+}
