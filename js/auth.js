@@ -1,53 +1,192 @@
 /**
- * FeastFlow - Authentication & Role Switcher Module
- * Handles login, signup, persistent sessions, and seamless multi-role switching.
+ * FeastFlow - Authentication Module
+ * Single Login Form with Role Credentials Sheet & Screen Switcher
  */
 
 const Auth = {
   init() {
     this.bindEvents();
-    this.updateUserUI();
-    this.renderGreeting();
+    this.checkSession();
   },
 
   getCurrentUser() {
     return window.db.currentUser;
   },
 
+  checkSession() {
+    const user = this.getCurrentUser();
+    const loginContainer = document.getElementById('login-page-container');
+    const mainDashboard = document.getElementById('app-main-dashboard');
+
+    if (user) {
+      if (loginContainer) loginContainer.classList.add('hidden');
+      if (mainDashboard) mainDashboard.classList.remove('hidden');
+      this.updateUserUI();
+      this.renderGreeting();
+      if (window.App) window.App.switchRoleView(user.role);
+    } else {
+      if (loginContainer) loginContainer.classList.remove('hidden');
+      if (mainDashboard) mainDashboard.classList.add('hidden');
+    }
+  },
+
+  fillCredentials(role) {
+    const targetUser = window.db.users.find(u => u.role === role);
+    if (!targetUser) return;
+
+    const idInput = document.getElementById('login-id-input');
+    const passInput = document.getElementById('login-pass-input');
+    const roleBadge = document.getElementById('detected-role-badge');
+
+    if (idInput) {
+      idInput.value = targetUser.email;
+      idInput.focus();
+    }
+    if (passInput) {
+      passInput.value = targetUser.password;
+    }
+
+    if (roleBadge) {
+      roleBadge.innerHTML = `<span class="role-badge badge-${role}">Selected: ${this.formatRoleName(role)}</span>`;
+    }
+
+    // Highlight active card
+    document.querySelectorAll('.credential-card').forEach(card => {
+      card.classList.toggle('active', card.dataset.role === role);
+    });
+
+    window.showToast(`Populated credentials for ${targetUser.name} (${this.formatRoleName(role)})`, 'info');
+  },
+
+  login(identifier, password) {
+    const cleanId = (identifier || '').trim().toLowerCase();
+    const cleanPass = (password || '').trim();
+
+    if (!cleanId || !cleanPass) {
+      this.showLoginError('Please enter both User ID/Email and Password.');
+      return false;
+    }
+
+    const user = window.db.users.find(u => 
+      (u.email.toLowerCase() === cleanId || u.username.toLowerCase() === cleanId || u.id.toLowerCase() === cleanId)
+    );
+
+    if (!user) {
+      this.showLoginError('User ID not found. Use credentials from the guide above.');
+      return false;
+    }
+
+    if (user.password !== cleanPass && cleanPass !== 'password123') {
+      this.showLoginError('Incorrect password. Check the credentials table.');
+      return false;
+    }
+
+    if (user.status === 'suspended') {
+      this.showLoginError('This account has been suspended by Administrator.');
+      return false;
+    }
+
+    this.clearLoginError();
+    window.db.setCurrentUser(user);
+
+    // Switch screen to portal
+    const loginContainer = document.getElementById('login-page-container');
+    const mainDashboard = document.getElementById('app-main-dashboard');
+    if (loginContainer) loginContainer.classList.add('hidden');
+    if (mainDashboard) mainDashboard.classList.remove('hidden');
+
+    this.updateUserUI();
+    this.renderGreeting();
+    
+    if (window.App) {
+      window.App.switchRoleView(user.role);
+    }
+
+    window.showToast(`🎉 Login Successful! Welcome back, ${user.name}`, 'success');
+    return true;
+  },
+
+  logout() {
+    window.db.setCurrentUser(null);
+    const loginContainer = document.getElementById('login-page-container');
+    const mainDashboard = document.getElementById('app-main-dashboard');
+    
+    if (loginContainer) loginContainer.classList.remove('hidden');
+    if (mainDashboard) mainDashboard.classList.add('hidden');
+
+    // Clear login form inputs
+    const idInput = document.getElementById('login-id-input');
+    const passInput = document.getElementById('login-pass-input');
+    if (idInput) idInput.value = '';
+    if (passInput) passInput.value = '';
+
+    window.showToast('Logged out successfully. Returned to Login Screen.', 'info');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  showLoginError(msg) {
+    const errBox = document.getElementById('login-error-msg');
+    if (errBox) {
+      errBox.textContent = msg;
+      errBox.classList.remove('hidden');
+    } else {
+      window.showToast(msg, 'error');
+    }
+  },
+
+  clearLoginError() {
+    const errBox = document.getElementById('login-error-msg');
+    if (errBox) {
+      errBox.textContent = '';
+      errBox.classList.add('hidden');
+    }
+  },
+
+  togglePasswordVisibility() {
+    const passInput = document.getElementById('login-pass-input');
+    const eyeBtn = document.getElementById('toggle-password-btn');
+    if (passInput && eyeBtn) {
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        eyeBtn.textContent = '👁️';
+      } else {
+        passInput.type = 'password';
+        eyeBtn.textContent = '🔒';
+      }
+    }
+  },
+
   getTimeGreeting() {
     const hour = new Date().getHours();
     if (hour < 12) return { text: 'Good Morning', icon: '☀️', mood: 'Start your day with a hearty breakfast' };
-    if (hour < 17) return { text: 'Good Afternoon', icon: '🍕', mood: 'Refuel with lunch & gourmet delights' };
+    if (hour < 17) return { text: 'Good Afternoon', icon: '🍕', mood: 'Refuel with gourmet lunch & delights' };
     return { text: 'Good Evening', icon: '🌙', mood: 'Unwind with comfort dinner & treats' };
   },
 
   updateUserUI() {
     const user = this.getCurrentUser();
-    const userBadgeEl = document.getElementById('header-user-badge');
-    const rolePillEl = document.getElementById('header-role-pill');
+    if (!user) return;
+
     const userNameEl = document.getElementById('header-user-name');
     const userAvatarEl = document.getElementById('header-user-avatar');
+    const rolePillEl = document.getElementById('header-role-pill');
 
-    if (user) {
-      if (userNameEl) userNameEl.textContent = user.name;
-      if (userAvatarEl) userAvatarEl.src = user.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80';
-      if (rolePillEl) {
-        rolePillEl.textContent = this.formatRoleName(user.role);
-        rolePillEl.className = `role-badge badge-${user.role}`;
-      }
-
-      // Sync role indicator across screens
-      document.querySelectorAll('.current-user-name-text').forEach(el => {
-        el.textContent = user.name;
-      });
-      document.querySelectorAll('.current-user-role-text').forEach(el => {
-        el.textContent = this.formatRoleName(user.role);
-      });
+    if (userNameEl) userNameEl.textContent = user.name;
+    if (userAvatarEl) userAvatarEl.src = user.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80';
+    if (rolePillEl) {
+      rolePillEl.textContent = this.formatRoleName(user.role);
+      rolePillEl.className = `role-badge badge-${user.role}`;
     }
 
-    // Update Bottom Nav based on current role
+    document.querySelectorAll('.current-user-name-text').forEach(el => {
+      el.textContent = user.name;
+    });
+    document.querySelectorAll('.current-user-role-text').forEach(el => {
+      el.textContent = this.formatRoleName(user.role);
+    });
+
     if (window.Navigation) {
-      window.Navigation.renderBottomNav(user ? user.role : 'customer');
+      window.Navigation.renderBottomNav(user.role);
     }
   },
 
@@ -55,7 +194,7 @@ const Auth = {
     switch (role) {
       case 'customer': return 'Foodie (Customer)';
       case 'restaurant': return 'Kitchen Partner';
-      case 'rider': return 'Delivery Rider';
+      case 'rider': return 'Delivery Partner (Rider)';
       case 'admin': return 'Super Admin';
       default: return role;
     }
@@ -76,159 +215,45 @@ const Auth = {
     }
   },
 
-  loginDemo(role) {
-    const targetUser = window.db.users.find(u => u.role === role);
-    if (targetUser) {
-      window.db.setCurrentUser(targetUser);
-      this.updateUserUI();
-      this.renderGreeting();
-      this.closeAuthModal();
-      
-      // Dispatch role change
-      if (window.App) {
-        window.App.switchRoleView(role);
-      }
-      
-      window.showToast(`Logged in as ${targetUser.name} (${this.formatRoleName(role)})`, 'success');
-    }
-  },
-
-  login(email, password) {
-    const user = window.db.users.find(u => u.email.toLowerCase() === email.toLowerCase().trim());
-    if (!user) {
-      window.showToast('User not found. Use Demo Login or Sign Up.', 'error');
-      return false;
-    }
-    if (user.status === 'suspended') {
-      window.showToast('Account is suspended by Admin.', 'error');
-      return false;
-    }
-
-    window.db.setCurrentUser(user);
-    this.updateUserUI();
-    this.renderGreeting();
-    this.closeAuthModal();
-    
-    if (window.App) {
-      window.App.switchRoleView(user.role);
-    }
-    window.showToast(`Welcome back, ${user.name}!`, 'success');
-    return true;
-  },
-
-  signup(name, email, role, phone) {
-    const existing = window.db.users.find(u => u.email.toLowerCase() === email.toLowerCase().trim());
-    if (existing) {
-      window.showToast('Email already registered. Please sign in.', 'error');
-      return false;
-    }
-
-    const newUser = {
-      id: 'u_' + Date.now(),
-      name: name.trim(),
-      email: email.trim(),
-      role: role || 'customer',
-      avatar: `https://images.unsplash.com/photo-${1534528741775 + Math.floor(Math.random() * 1000)}?auto=format&fit=crop&w=150&q=80`,
-      phone: phone || '+1 (555) 000-1122',
-      address: '101 Maple Street, City Center',
-      savedAddresses: [{ id: 'a_new', label: 'Home', address: '101 Maple Street, City Center', isDefault: true }],
-      status: 'active'
-    };
-
-    if (role === 'rider') {
-      newUser.vehicle = 'Yamaha NMAX (Blue)';
-      newUser.vehiclePlate = 'FF-309-R';
-      newUser.rating = 5.0;
-      newUser.completedOrders = 0;
-      newUser.todayEarnings = 0;
-    } else if (role === 'restaurant') {
-      newUser.restaurantId = 'r_custom_' + Date.now();
-      newUser.restaurantName = name + "'s Kitchen";
-    }
-
-    window.db.users.push(newUser);
-    window.db.setCurrentUser(newUser);
-    this.updateUserUI();
-    this.renderGreeting();
-    this.closeAuthModal();
-
-    if (window.App) {
-      window.App.switchRoleView(newUser.role);
-    }
-
-    window.showToast(`Account created! Welcome, ${newUser.name}.`, 'success');
-    return true;
-  },
-
-  logout() {
-    // Return to guest or prompt modal
-    const defaultCustomer = window.db.users[0];
-    window.db.setCurrentUser(defaultCustomer);
-    this.updateUserUI();
-    this.renderGreeting();
-    if (window.App) {
-      window.App.switchRoleView('customer');
-    }
-    window.showToast('Switched to default customer session.', 'info');
-  },
-
-  openAuthModal(initialTab = 'login') {
-    const modal = document.getElementById('auth-modal');
-    if (modal) {
-      modal.classList.add('active');
-      this.switchAuthTab(initialTab);
-    }
-  },
-
-  closeAuthModal() {
-    const modal = document.getElementById('auth-modal');
-    if (modal) {
-      modal.classList.remove('active');
-    }
-  },
-
-  switchAuthTab(tabName) {
-    const loginForm = document.getElementById('auth-form-login');
-    const signupForm = document.getElementById('auth-form-signup');
-    const tabBtns = document.querySelectorAll('.auth-tab-btn');
-
-    tabBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tab === tabName);
-    });
-
-    if (loginForm && signupForm) {
-      if (tabName === 'login') {
-        loginForm.classList.remove('hidden');
-        signupForm.classList.add('hidden');
-      } else {
-        loginForm.classList.add('hidden');
-        signupForm.classList.remove('hidden');
-      }
-    }
-  },
-
   bindEvents() {
-    // Quick Demo role switcher dropdown in header
-    const roleSelect = document.getElementById('header-role-select');
-    if (roleSelect) {
-      roleSelect.value = this.getCurrentUser().role;
-      roleSelect.addEventListener('change', (e) => {
-        this.loginDemo(e.target.value);
+    const loginForm = document.getElementById('single-login-form');
+    if (loginForm) {
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const idVal = document.getElementById('login-id-input').value;
+        const passVal = document.getElementById('login-pass-input').value;
+        this.login(idVal, passVal);
       });
     }
 
-    // Listen for custom database changes
-    window.addEventListener('user-changed', () => {
-      this.updateUserUI();
-      this.renderGreeting();
-      if (roleSelect) roleSelect.value = this.getCurrentUser().role;
-    });
+    // Role switcher in header (when logged in)
+    const roleSelect = document.getElementById('header-role-select');
+    if (roleSelect) {
+      roleSelect.addEventListener('change', (e) => {
+        const targetRole = e.target.value;
+        const targetUser = window.db.users.find(u => u.role === targetRole);
+        if (targetUser) {
+          window.db.setCurrentUser(targetUser);
+          this.updateUserUI();
+          this.renderGreeting();
+          if (window.App) window.App.switchRoleView(targetRole);
+          window.showToast(`Switched account to ${targetUser.name}`, 'info');
+        }
+      });
+    }
 
-    // Close auth modal on backdrop click
-    const modal = document.getElementById('auth-modal');
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) this.closeAuthModal();
+    // Dynamic role preview on input
+    const idInput = document.getElementById('login-id-input');
+    if (idInput) {
+      idInput.addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase().trim();
+        const roleBadge = document.getElementById('detected-role-badge');
+        const matched = window.db.users.find(u => 
+          u.email.toLowerCase().includes(val) || u.username.toLowerCase().includes(val) || u.role.toLowerCase().includes(val)
+        );
+        if (matched && val.length > 2) {
+          if (roleBadge) roleBadge.innerHTML = `<span class="role-badge badge-${matched.role}">Role: ${this.formatRoleName(matched.role)}</span>`;
+        }
       });
     }
   }

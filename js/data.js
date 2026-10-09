@@ -1,13 +1,14 @@
 /**
- * FeastFlow - Mock Database & Initial State
- * Real-time data model supporting Customer, Restaurant, Rider, and Admin roles.
+ * FeastFlow - Database & State Store with Role Credentials
  */
 
 const DEFAULT_USERS = [
   {
     id: 'u1',
+    username: 'customer',
+    email: 'customer@feastflow.com',
+    password: 'customer123',
     name: 'Ayaz Khan',
-    email: 'ayaz@feastflow.com',
     role: 'customer',
     avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
     phone: '+1 (555) 019-2834',
@@ -20,8 +21,10 @@ const DEFAULT_USERS = [
   },
   {
     id: 'u2',
+    username: 'restaurant',
+    email: 'restaurant@feastflow.com',
+    password: 'chef123',
     name: 'Chef Marco Rossi',
-    email: 'marco@bellaitalia.com',
     role: 'restaurant',
     restaurantId: 'r1',
     restaurantName: 'Bella Italia Bistro',
@@ -32,8 +35,10 @@ const DEFAULT_USERS = [
   },
   {
     id: 'u3',
+    username: 'rider',
+    email: 'rider@feastflow.com',
+    password: 'rider123',
     name: 'Alex Swift',
-    email: 'alex.rider@fastdrop.com',
     role: 'rider',
     avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=200&q=80',
     phone: '+1 (555) 887-3401',
@@ -46,8 +51,10 @@ const DEFAULT_USERS = [
   },
   {
     id: 'u4',
-    name: 'Sarah Vance (Chief Admin)',
+    username: 'admin',
     email: 'admin@feastflow.com',
+    password: 'admin123',
+    name: 'Sarah Vance (Chief Admin)',
     role: 'admin',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
     phone: '+1 (555) 771-0022',
@@ -338,13 +345,12 @@ const INITIAL_ORDERS = [
     deliveryFee: 1.99,
     taxes: 2.50,
     total: 31.07,
-    status: 'out_for_delivery', // pending -> preparing -> ready -> out_for_delivery -> delivered
+    status: 'out_for_delivery',
     deliveryAddress: '742 Evergreen Terrace, Springfield',
     orderTime: '15 mins ago',
     eta: '12 mins',
     paymentMethod: 'Credit Card (•••• 4242)',
-    liveProgress: 75, // percentage
-    coordinates: { lat: 37.7749, lng: -122.4194 }
+    liveProgress: 75
   },
   {
     id: 'ORD-8919',
@@ -425,7 +431,6 @@ const PROMO_CODES = {
   FREESHIP: { freeDelivery: true, minOrder: 10, description: 'Free Express Delivery' }
 };
 
-// Initialize State Manager with LocalStorage fallback
 class DataStore {
   constructor() {
     this.loadState();
@@ -436,7 +441,9 @@ class DataStore {
     this.restaurants = JSON.parse(localStorage.getItem('ff_restaurants')) || RESTAURANTS;
     this.dishes = JSON.parse(localStorage.getItem('ff_dishes')) || DISHES;
     this.orders = JSON.parse(localStorage.getItem('ff_orders')) || INITIAL_ORDERS;
-    this.currentUser = JSON.parse(localStorage.getItem('ff_current_user')) || DEFAULT_USERS[0]; // Ayaz Khan (Customer) default
+    // By default, currentUser is null if unauthenticated
+    const savedUser = localStorage.getItem('ff_current_user');
+    this.currentUser = savedUser ? JSON.parse(savedUser) : null;
   }
 
   save() {
@@ -444,7 +451,11 @@ class DataStore {
     localStorage.setItem('ff_restaurants', JSON.stringify(this.restaurants));
     localStorage.setItem('ff_dishes', JSON.stringify(this.dishes));
     localStorage.setItem('ff_orders', JSON.stringify(this.orders));
-    localStorage.setItem('ff_current_user', JSON.stringify(this.currentUser));
+    if (this.currentUser) {
+      localStorage.setItem('ff_current_user', JSON.stringify(this.currentUser));
+    } else {
+      localStorage.removeItem('ff_current_user');
+    }
   }
 
   setCurrentUser(user) {
@@ -521,6 +532,5 @@ class DataStore {
   }
 }
 
-// Global DB instance
 window.db = new DataStore();
 window.PROMO_CODES = PROMO_CODES;

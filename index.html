@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FeastFlow - Multi-Role Food Delivery & Gourmet Commerce</title>
-  <meta name="description" content="FeastFlow is a modern, responsive food delivery platform featuring live tracking, role-based workflows for Customers, Restaurants, Riders, and Admins.">
+  <title>FeastFlow - Multi-Role Food Delivery Login & Platform</title>
+  <meta name="description" content="FeastFlow Login Authentication Portal with role access for Customer, Restaurant, Delivery Rider, and Super Admin.">
   
   <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,10 +16,129 @@
 </head>
 <body>
 
-  <!-- App Wrapper (Supports standard responsive & simulated mobile preview mode) -->
-  <div id="app-viewport-wrapper">
+  <!-- ========================================================= -->
+  <!-- 1. DEDICATED FULL-SCREEN SINGLE LOGIN PAGE FOR ALL ROLES  -->
+  <!-- ========================================================= -->
+  <div id="login-page-container" class="login-fullscreen-wrapper">
+    <div class="login-container-card">
+      
+      <!-- Brand & Login Header -->
+      <div class="login-brand-header">
+        <div class="brand-logo-icon lg-logo">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+          </svg>
+        </div>
+        <h1 class="login-main-title">Feast<span class="brand-highlight">Flow</span> Portal</h1>
+        <p class="login-subtitle">Single unified login for all platform roles</p>
+      </div>
+
+      <!-- Role ID & Password Reference Cards (1-Click Auto-Fill) -->
+      <div class="login-roles-guide">
+        <div class="roles-guide-header">
+          <span class="guide-badge">🔑 Role Access Credentials</span>
+          <small class="guide-hint">Click any card to auto-fill ID & Password</small>
+        </div>
+
+        <div class="credentials-grid">
+          
+          <!-- 1. Customer Role Card -->
+          <div class="credential-card role-card-customer" data-role="customer" onclick="Auth.fillCredentials('customer')" title="Click to Auto-Fill Customer Credentials">
+            <div class="cred-icon">👤</div>
+            <div class="cred-info">
+              <div class="cred-role-title">Customer (Foodie)</div>
+              <div class="cred-name">Ayaz Khan</div>
+              <div class="cred-field"><span class="cred-label">ID:</span> <code>customer@feastflow.com</code></div>
+              <div class="cred-field"><span class="cred-label">Pass:</span> <code>customer123</code></div>
+            </div>
+            <button type="button" class="btn-fill" aria-label="Auto fill customer credentials">⚡ Fill</button>
+          </div>
+
+          <!-- 2. Restaurant Role Card -->
+          <div class="credential-card role-card-restaurant" data-role="restaurant" onclick="Auth.fillCredentials('restaurant')" title="Click to Auto-Fill Restaurant Credentials">
+            <div class="cred-icon">👨‍🍳</div>
+            <div class="cred-info">
+              <div class="cred-role-title">Restaurant Kitchen</div>
+              <div class="cred-name">Chef Marco Rossi</div>
+              <div class="cred-field"><span class="cred-label">ID:</span> <code>restaurant@feastflow.com</code></div>
+              <div class="cred-field"><span class="cred-label">Pass:</span> <code>chef123</code></div>
+            </div>
+            <button type="button" class="btn-fill" aria-label="Auto fill restaurant credentials">⚡ Fill</button>
+          </div>
+
+          <!-- 3. Delivery Rider Role Card -->
+          <div class="credential-card role-card-rider" data-role="rider" onclick="Auth.fillCredentials('rider')" title="Click to Auto-Fill Rider Credentials">
+            <div class="cred-icon">🛵</div>
+            <div class="cred-info">
+              <div class="cred-role-title">Delivery Partner</div>
+              <div class="cred-name">Alex Swift</div>
+              <div class="cred-field"><span class="cred-label">ID:</span> <code>rider@feastflow.com</code></div>
+              <div class="cred-field"><span class="cred-label">Pass:</span> <code>rider123</code></div>
+            </div>
+            <button type="button" class="btn-fill" aria-label="Auto fill rider credentials">⚡ Fill</button>
+          </div>
+
+          <!-- 4. Super Admin Role Card -->
+          <div class="credential-card role-card-admin" data-role="admin" onclick="Auth.fillCredentials('admin')" title="Click to Auto-Fill Admin Credentials">
+            <div class="cred-icon">👑</div>
+            <div class="cred-info">
+              <div class="cred-role-title">Super Admin</div>
+              <div class="cred-name">Sarah Vance</div>
+              <div class="cred-field"><span class="cred-label">ID:</span> <code>admin@feastflow.com</code></div>
+              <div class="cred-field"><span class="cred-label">Pass:</span> <code>admin123</code></div>
+            </div>
+            <button type="button" class="btn-fill" aria-label="Auto fill admin credentials">⚡ Fill</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Single Unified Login Form -->
+      <form id="single-login-form" class="single-login-form">
+        
+        <!-- Detected Role indicator -->
+        <div id="detected-role-badge" class="role-preview-row"></div>
+
+        <!-- Error Message Alert -->
+        <div id="login-error-msg" class="login-alert-error hidden"></div>
+
+        <div class="form-group">
+          <label for="login-id-input">User ID / Email Address</label>
+          <div class="input-with-icon">
+            <span class="field-icon">📧</span>
+            <input type="text" id="login-id-input" class="form-input" placeholder="e.g. customer@feastflow.com or ayaz" required autocomplete="username">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="login-pass-input">Password</label>
+          <div class="input-with-icon">
+            <span class="field-icon">🔑</span>
+            <input type="password" id="login-pass-input" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
+            <button type="button" id="toggle-password-btn" class="pass-toggle-btn" onclick="Auth.togglePasswordVisibility()" aria-label="Toggle password view">🔒</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg mt-3" id="btn-login-submit">
+          <span>Sign In to Portal</span>
+          <span>→</span>
+        </button>
+
+      </form>
+
+      <div class="login-card-footer">
+        <span class="security-tag">🔒 Secured with Role-Based Access Control (RBAC)</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- 2. MAIN APPLICATION PORTAL & ROLE PAGES (AFTER LOGIN)    -->
+  <!-- ========================================================= -->
+  <div id="app-main-dashboard" class="hidden">
     
-    <!-- Top Sticky Header -->
+    <!-- Top Header Navigation -->
     <header class="top-navbar" id="main-header">
       <div class="nav-container">
         
@@ -54,7 +173,7 @@
         <!-- Right Header Actions -->
         <div class="header-actions">
           
-          <!-- Mobile View Toggle Simulator for desktop preview -->
+          <!-- Mobile View Toggle Simulator -->
           <button id="toggle-mobile-mode-btn" class="header-btn btn-ghost" title="Toggle Mobile Phone Mode Simulator">
             <span>📱 Simulator</span>
           </button>
@@ -89,21 +208,19 @@
             </div>
           </div>
 
-          <!-- Login / Auth Trigger Button -->
-          <button class="btn btn-outline btn-sm auth-open-btn" onclick="Auth.openAuthModal('login')">
-            <span>Auth</span>
+          <!-- Logout Button (Returns to single login page) -->
+          <button class="btn btn-outline btn-sm logout-header-btn" onclick="Auth.logout()" title="Sign Out to Login Page">
+            <span>🚪 Sign Out</span>
           </button>
 
         </div>
       </div>
     </header>
 
-    <!-- Main Content Container -->
+    <!-- Main Content Body -->
     <main class="main-body" id="main-content-area">
 
-      <!-- ============================================== -->
-      <!-- 1. STARTING GREETING & HERO SECTION           -->
-      <!-- ============================================== -->
+      <!-- Starting Greeting Hero Section -->
       <section class="greeting-hero" id="greeting-hero-section">
         <div class="hero-container">
           <div class="hero-content">
@@ -144,19 +261,12 @@
         </div>
       </section>
 
-      <!-- ============================================== -->
-      <!-- 2. CUSTOMER VIEW                              -->
-      <!-- ============================================== -->
+      <!-- Customer View -->
       <section id="view-customer" class="role-view-section">
-        
-        <!-- Category Filter Carousel -->
         <div class="categories-bar-wrapper">
-          <div class="categories-scroll" id="categories-container">
-            <!-- Dynamically populated categories -->
-          </div>
+          <div class="categories-scroll" id="categories-container"></div>
         </div>
 
-        <!-- Filter & Dietary Options Bar -->
         <div class="filter-controls-bar">
           <div class="filter-left">
             <label class="toggle-switch-label">
@@ -170,7 +280,6 @@
           </div>
         </div>
 
-        <!-- Featured Restaurants Showcase -->
         <div class="restaurants-section">
           <div class="section-header">
             <div>
@@ -178,12 +287,9 @@
               <p class="section-subtitle">Hand-picked by food connoisseurs</p>
             </div>
           </div>
-          <div class="restaurants-grid" id="restaurants-grid">
-            <!-- Dynamically populated restaurants -->
-          </div>
+          <div class="restaurants-grid" id="restaurants-grid"></div>
         </div>
 
-        <!-- Popular Dishes Food Catalog -->
         <div class="dishes-section" id="dishes-section">
           <div class="section-header">
             <div>
@@ -191,12 +297,9 @@
               <p class="section-subtitle">Click any dish to customize & add to your feast</p>
             </div>
           </div>
-          <div class="dishes-grid" id="dishes-grid">
-            <!-- Dynamically populated dishes -->
-          </div>
+          <div class="dishes-grid" id="dishes-grid"></div>
         </div>
 
-        <!-- Customer Recent Orders & Tracking Section -->
         <div class="customer-orders-section" id="customer-orders-section">
           <div class="section-header">
             <div>
@@ -204,19 +307,12 @@
               <p class="section-subtitle">Track your delivery rider in real time</p>
             </div>
           </div>
-          <div class="orders-list-grid" id="customer-orders-list">
-            <!-- Dynamically populated customer orders -->
-          </div>
+          <div class="orders-list-grid" id="customer-orders-list"></div>
         </div>
-
       </section>
 
-      <!-- ============================================== -->
-      <!-- 3. RESTAURANT MANAGER VIEW                    -->
-      <!-- ============================================== -->
+      <!-- Restaurant Manager View -->
       <section id="view-restaurant" class="role-view-section hidden">
-        
-        <!-- Kitchen Header & Metrics -->
         <div class="role-dashboard-header">
           <div class="role-badge-row">
             <span class="role-badge badge-restaurant">👨‍🍳 Kitchen Partner Portal</span>
@@ -226,7 +322,6 @@
           <p class="text-muted">Manage incoming tickets, mark food ready, and control live menu pricing & availability.</p>
         </div>
 
-        <!-- Kitchen Stats Cards -->
         <div class="kpi-grid">
           <div class="kpi-card">
             <span class="kpi-icon">💰</span>
@@ -258,7 +353,6 @@
           </div>
         </div>
 
-        <!-- Kitchen Orders Filter Tabs -->
         <div class="kot-filter-bar">
           <button class="kot-filter-btn active" data-filter="all" onclick="RestaurantView.setOrderFilter('all')">All Tickets</button>
           <button class="kot-filter-btn" data-filter="pending" onclick="RestaurantView.setOrderFilter('pending')">⚡ New Incoming</button>
@@ -267,12 +361,8 @@
           <button class="kot-filter-btn" data-filter="delivered" onclick="RestaurantView.setOrderFilter('delivered')">Completed</button>
         </div>
 
-        <!-- Live Kitchen Order Tickets Grid -->
-        <div class="kot-grid" id="kot-orders-grid">
-          <!-- Dynamically populated KOT cards -->
-        </div>
+        <div class="kot-grid" id="kot-orders-grid"></div>
 
-        <!-- Restaurant Menu Management -->
         <div class="menu-management-card" id="rest-menu-section">
           <div class="card-header-flex">
             <div>
@@ -294,20 +384,14 @@
                   <th>Inventory Status</th>
                 </tr>
               </thead>
-              <tbody id="restaurant-menu-table-body">
-                <!-- Dynamically populated menu rows -->
-              </tbody>
+              <tbody id="restaurant-menu-table-body"></tbody>
             </table>
           </div>
         </div>
-
       </section>
 
-      <!-- ============================================== -->
-      <!-- 4. DELIVERY PARTNER / RIDER VIEW               -->
-      <!-- ============================================== -->
+      <!-- Delivery Rider View -->
       <section id="view-rider" class="role-view-section hidden">
-        
         <div class="role-dashboard-header">
           <div class="role-badge-row">
             <span class="role-badge badge-rider">🛵 Delivery Courier Portal</span>
@@ -317,7 +401,6 @@
           <p class="text-muted">Accept delivery requests, navigate to customers, and track your daily tips & earnings.</p>
         </div>
 
-        <!-- Rider Shift Stats & Online Toggle -->
         <div class="rider-stats-bar">
           <div class="rider-toggle-wrap">
             <label class="switch">
@@ -342,12 +425,8 @@
           </div>
         </div>
 
-        <!-- Active Delivery Navigation Screen (when order accepted) -->
-        <div id="rider-active-trip-view" class="active-trip-container">
-          <!-- Dynamically populated active trip HUD -->
-        </div>
+        <div id="rider-active-trip-view" class="active-trip-container"></div>
 
-        <!-- Available Delivery Orders Pool -->
         <div class="available-orders-section">
           <div class="section-header">
             <div>
@@ -355,18 +434,12 @@
               <p class="section-subtitle">Pick up from restaurants ready for dispatch</p>
             </div>
           </div>
-          <div class="rider-orders-list" id="rider-available-orders-list">
-            <!-- Dynamically populated available jobs -->
-          </div>
+          <div class="rider-orders-list" id="rider-available-orders-list"></div>
         </div>
-
       </section>
 
-      <!-- ============================================== -->
-      <!-- 5. ADMIN PANEL VIEW                           -->
-      <!-- ============================================== -->
+      <!-- Admin View -->
       <section id="view-admin" class="role-view-section hidden">
-        
         <div class="role-dashboard-header">
           <div class="role-badge-row">
             <span class="role-badge badge-admin">👑 Super Administrator Control Center</span>
@@ -376,7 +449,6 @@
           <p class="text-muted">Monitor platform-wide GMV, live orders dispatch, manage user permissions and restaurant partners.</p>
         </div>
 
-        <!-- Admin KPI Metrics -->
         <div class="kpi-grid">
           <div class="kpi-card">
             <span class="kpi-icon">📈</span>
@@ -408,7 +480,6 @@
           </div>
         </div>
 
-        <!-- Platform Analytics Visual Bars -->
         <div class="admin-charts-grid">
           <div class="admin-chart-card">
             <h4>Weekly Sales Volume</h4>
@@ -446,7 +517,6 @@
           </div>
         </div>
 
-        <!-- Live Orders Control Table -->
         <div class="admin-table-card mt-4">
           <div class="card-header-flex">
             <div>
@@ -478,14 +548,11 @@
                   <th>Override Action</th>
                 </tr>
               </thead>
-              <tbody id="admin-orders-table-body">
-                <!-- Dynamically populated admin orders -->
-              </tbody>
+              <tbody id="admin-orders-table-body"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- User & Role Management Table -->
         <div class="admin-table-card mt-4" id="admin-users-table">
           <div class="card-header-flex">
             <div>
@@ -504,30 +571,20 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody id="admin-users-table-body">
-                <!-- Dynamically populated users -->
-              </tbody>
+              <tbody id="admin-users-table-body"></tbody>
             </table>
           </div>
         </div>
-
       </section>
 
     </main>
 
-    <!-- ============================================== -->
-    <!-- 6. RESPONSIVE BOTTOM NAVIGATION BAR           -->
-    <!-- (Adaptive tabs based on active role)           -->
-    <!-- ============================================== -->
-    <nav class="bottom-navigation-bar" id="bottom-nav-bar" aria-label="Bottom Navigation">
-      <!-- Dynamically rendered by Navigation.renderBottomNav(role) -->
-    </nav>
+    <!-- Responsive Bottom Navigation Bar -->
+    <nav class="bottom-navigation-bar" id="bottom-nav-bar" aria-label="Bottom Navigation"></nav>
 
-  </div> <!-- End App Wrapper -->
+  </div> <!-- End App Main Dashboard -->
 
-  <!-- ============================================== -->
-  <!-- 7. SLIDE-OVER SHOPPING CART DRAWER            -->
-  <!-- ============================================== -->
+  <!-- Slide-Over Shopping Cart Drawer -->
   <div class="cart-overlay" id="cart-overlay"></div>
   <aside class="cart-drawer" id="cart-drawer" aria-label="Shopping Cart">
     <div class="cart-drawer-header">
@@ -538,7 +595,6 @@
       <button class="cart-close-btn" id="cart-close-btn" aria-label="Close Cart">✕</button>
     </div>
 
-    <!-- Empty state -->
     <div class="cart-empty-state hidden" id="cart-empty-state">
       <div class="empty-cart-icon">🛒</div>
       <h4>Your basket is hungry</h4>
@@ -546,22 +602,15 @@
       <button class="btn btn-primary mt-3" onclick="Cart.closeCart(); CustomerView.setCategory('All')">Browse Menu</button>
     </div>
 
-    <!-- Cart Item List -->
-    <div class="cart-items-scroll" id="cart-items-list">
-      <!-- Dynamically populated cart items -->
-    </div>
+    <div class="cart-items-scroll" id="cart-items-list"></div>
 
-    <!-- Checkout Footer & Billing Breakdown -->
     <div class="cart-checkout-footer" id="cart-checkout-footer">
-      
-      <!-- Promo code coupon -->
       <div class="promo-input-row">
         <input type="text" id="cart-promo-input" class="promo-input" placeholder="Coupon Code (e.g. FEAST30)" />
         <button id="btn-apply-promo" class="btn btn-outline btn-sm">Apply</button>
       </div>
       <div id="applied-promo-badge"></div>
 
-      <!-- Bill breakdown -->
       <div class="bill-summary-table">
         <div class="bill-row">
           <span>Subtotal</span>
@@ -585,7 +634,6 @@
         </div>
       </div>
 
-      <!-- Delivery Address Preview -->
       <div class="checkout-delivery-preview">
         <div class="addr-row">
           <span>📍 <strong>Deliver to:</strong> 742 Evergreen Terrace, Springfield</span>
@@ -593,130 +641,30 @@
         </div>
       </div>
 
-      <!-- Checkout Button -->
       <button class="btn btn-primary btn-block checkout-action-btn" id="btn-checkout-now">
         <span>Proceed to Checkout</span>
         <span class="checkout-arrow">→</span>
       </button>
-
     </div>
   </aside>
 
-  <!-- ============================================== -->
-  <!-- 8. AUTHENTICATION & LOGIN MODAL                -->
-  <!-- ============================================== -->
-  <div class="modal-backdrop" id="auth-modal">
-    <div class="modal-box auth-modal-box">
-      <button class="modal-close-btn" onclick="Auth.closeAuthModal()">✕</button>
-
-      <div class="auth-header">
-        <div class="auth-logo-badge">🔥</div>
-        <h2>Welcome to FeastFlow</h2>
-        <p class="text-muted">Log in to track orders, manage menus, or deliver feasts</p>
-      </div>
-
-      <!-- Quick 1-Click Demo Login Panel -->
-      <div class="demo-login-section">
-        <span class="demo-badge-label">⚡ 1-Click Instant Demo Login:</span>
-        <div class="demo-buttons-grid">
-          <button class="demo-role-btn btn-customer" onclick="Auth.loginDemo('customer')">
-            <span class="demo-emoji">👤</span>
-            <div><strong>Customer</strong><small class="block">Ayaz Khan</small></div>
-          </button>
-          <button class="demo-role-btn btn-restaurant" onclick="Auth.loginDemo('restaurant')">
-            <span class="demo-emoji">👨‍🍳</span>
-            <div><strong>Restaurant</strong><small class="block">Chef Marco</small></div>
-          </button>
-          <button class="demo-role-btn btn-rider" onclick="Auth.loginDemo('rider')">
-            <span class="demo-emoji">🛵</span>
-            <div><strong>Rider Partner</strong><small class="block">Alex Swift</small></div>
-          </button>
-          <button class="demo-role-btn btn-admin" onclick="Auth.loginDemo('admin')">
-            <span class="demo-emoji">👑</span>
-            <div><strong>Super Admin</strong><small class="block">Sarah Vance</small></div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Auth Tabs: Login vs Register -->
-      <div class="auth-tabs">
-        <button class="auth-tab-btn active" data-tab="login" onclick="Auth.switchAuthTab('login')">Sign In</button>
-        <button class="auth-tab-btn" data-tab="signup" onclick="Auth.switchAuthTab('signup')">Create Account</button>
-      </div>
-
-      <!-- Sign In Form -->
-      <form id="auth-form-login" onsubmit="event.preventDefault(); Auth.login(this.email.value, this.password.value)">
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" name="email" class="form-input" placeholder="ayaz@feastflow.com" required value="ayaz@feastflow.com">
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" name="password" class="form-input" placeholder="••••••••" required value="password123">
-        </div>
-        <button type="submit" class="btn btn-primary btn-block mt-3">Sign In to FeastFlow</button>
-      </form>
-
-      <!-- Register Form -->
-      <form id="auth-form-signup" class="hidden" onsubmit="event.preventDefault(); Auth.signup(this.name.value, this.email.value, this.role.value, this.phone.value)">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" name="name" class="form-input" placeholder="e.g. John Doe" required>
-        </div>
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" name="email" class="form-input" placeholder="john@example.com" required>
-        </div>
-        <div class="form-group">
-          <label>Phone Number</label>
-          <input type="tel" name="phone" class="form-input" placeholder="+1 (555) 234-5678">
-        </div>
-        <div class="form-group">
-          <label>Select Your Platform Role</label>
-          <select name="role" class="form-input">
-            <option value="customer">👤 Customer (Order Food)</option>
-            <option value="restaurant">👨‍🍳 Restaurant Partner (Manage Kitchen)</option>
-            <option value="rider">🛵 Delivery Rider (Deliver Orders)</option>
-            <option value="admin">👑 Administrator</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Create Password</label>
-          <input type="password" name="password" class="form-input" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block mt-3">Create Free Account</button>
-      </form>
-
-    </div>
-  </div>
-
-  <!-- ============================================== -->
-  <!-- 9. DISH DETAIL & CUSTOMIZE MODAL               -->
-  <!-- ============================================== -->
+  <!-- Dish Detail & Customization Modal -->
   <div class="modal-backdrop" id="dish-detail-modal">
     <div class="modal-box dish-modal-container">
       <button class="modal-close-btn" onclick="CustomerView.closeDishModal()">✕</button>
-      <div id="dish-modal-body">
-        <!-- Dynamically rendered by CustomerView.openDishModal() -->
-      </div>
+      <div id="dish-modal-body"></div>
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- 10. LIVE ORDER TRACKING MODAL & TELEMETRY      -->
-  <!-- ============================================== -->
+  <!-- Live Order Tracking Modal -->
   <div class="modal-backdrop" id="order-tracking-modal">
     <div class="modal-box tracking-modal-container">
       <button class="modal-close-btn" onclick="CustomerView.closeOrderTracker()">✕</button>
-      <div id="order-tracking-body">
-        <!-- Dynamically rendered by CustomerView.openOrderTracker() -->
-      </div>
+      <div id="order-tracking-body"></div>
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- 11. RESTAURANT ADD DISH MODAL                  -->
-  <!-- ============================================== -->
+  <!-- Restaurant Add Dish Modal -->
   <div class="modal-backdrop" id="add-dish-modal">
     <div class="modal-box">
       <button class="modal-close-btn" onclick="RestaurantView.closeAddDishModal()">✕</button>
@@ -761,7 +709,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Dish Photo URL (Unsplash or direct image)</label>
+          <label>Dish Photo URL</label>
           <input type="url" name="dishImage" class="form-input" placeholder="https://images.unsplash.com/..." value="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80">
         </div>
         <div class="form-group">
@@ -773,15 +721,11 @@
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- 12. USER PROFILE & SWITCH ACCOUNT MODAL       -->
-  <!-- ============================================== -->
+  <!-- User Profile & Switch Account Modal -->
   <div class="modal-backdrop" id="profile-modal">
     <div class="modal-box profile-modal-container">
       <button class="modal-close-btn" onclick="App.closeProfileModal()">✕</button>
-      <div id="profile-modal-body">
-        <!-- Dynamically rendered by App.openProfileModal() -->
-      </div>
+      <div id="profile-modal-body"></div>
     </div>
   </div>
 

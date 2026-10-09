@@ -81,6 +81,255 @@ body.drawer-open {
   overflow: hidden;
 }
 
+/* ==========================================================================
+   Full-Screen Single Login Page (All Roles)
+   ========================================================================== */
+
+.login-fullscreen-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: radial-gradient(circle at top center, rgba(255, 87, 34, 0.12) 0%, transparent 60%),
+              radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+              var(--bg-primary);
+  position: relative;
+  z-index: 50;
+}
+
+.login-container-card {
+  width: 100%;
+  max-width: 620px;
+  background: rgba(17, 24, 39, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 87, 34, 0.15);
+  animation: slideUpFade 0.4s ease-out;
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-brand-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.lg-logo {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  margin: 0 auto 0.85rem;
+}
+
+.login-main-title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.login-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* Role Credentials Reference Grid */
+.login-roles-guide {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.roles-guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+
+.guide-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-primary-hover);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.guide-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.credentials-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.credential-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.credential-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.credential-card.active {
+  border-color: var(--accent-primary);
+  background: rgba(255, 87, 34, 0.12);
+}
+
+.role-card-customer:hover { border-color: rgba(59, 130, 246, 0.5); }
+.role-card-restaurant:hover { border-color: rgba(245, 158, 11, 0.5); }
+.role-card-rider:hover { border-color: rgba(16, 185, 129, 0.5); }
+.role-card-admin:hover { border-color: rgba(168, 85, 247, 0.5); }
+
+.cred-icon {
+  font-size: 1.4rem;
+}
+
+.cred-info {
+  flex: 1;
+}
+
+.cred-role-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.cred-name {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.cred-field {
+  font-size: 0.7rem;
+  line-height: 1.3;
+}
+
+.cred-label {
+  color: var(--text-subtle);
+  margin-right: 0.2rem;
+}
+
+.cred-field code {
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  color: #fbbf24;
+}
+
+.btn-fill {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-glass);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.credential-card:hover .btn-fill {
+  background: var(--accent-primary);
+  border-color: transparent;
+}
+
+/* Single Unified Login Form */
+.single-login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.role-preview-row {
+  min-height: 24px;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.login-alert-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  font-size: 0.825rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-icon {
+  position: absolute;
+  left: 0.85rem;
+  font-size: 0.95rem;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.input-with-icon .form-input {
+  padding-left: 2.6rem;
+  padding-right: 2.6rem;
+}
+
+.pass-toggle-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-lg {
+  padding: 0.85rem 1.5rem;
+  font-size: 1.05rem;
+}
+
+.login-card-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-glass);
+}
+
+.security-tag {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+
 /* Background Ambient Gourmet Glow */
 body::before {
   content: '';
